@@ -1,0 +1,86 @@
+.App {
+  width: 500px;
+  margin: 0 auto;
+}
+
+header{
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+
+.listBox{
+  width: 100%;
+  min-height: 200px;
+}
+
+footer{
+  border-top: 1px solid #ccc
+}
+
+.left{
+  float: left;
+}
+
+.right{
+  float: right;
+}
+
+.inputBox{
+  position: relative;
+}
+
+.input{
+  width: 100%;
+  height: 40px;
+  padding-left: 30px;
+}
+
+.allChecked{
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 10px;
+  transform: rotate(90deg)
+}
+
+.btns div {
+  float: left;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.btns div:hover {
+  border-radius: 4px;
+  border: 1px solid #a0d095;
+}
+
+.cancle{
+  transform: rotateZ(45deg)
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
