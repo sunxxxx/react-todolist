@@ -21,9 +21,10 @@ class App extends React.Component {
   add(e){
     if(window.event.keyCode === 13 && e.target.value){
       this.setState({list:[...this.state.list,e.target.value]})
-      e.target.value = '' 
-    }
+        e.target.value = '' 
+      }
   }
+
 
   changeAll(){
 
@@ -56,12 +57,9 @@ class App extends React.Component {
   }
 
   allChecked(e){
-    for(let i=0;i<this.state.list.length;i++){
-      this.state.list[i].checked=true;
-    }
-    this.setState({list:this.state.list},()=>{
-      //console.log(this.state.list)
-    })
+    // this.setState(state => {
+    //   return { counters: [...state.counters, obj] };
+    // });
   }
 
   render(){
@@ -78,10 +76,10 @@ class App extends React.Component {
             <i className="allChecked" onClick={this.allChecked.bind(this)}>></i>
           </div>
           <div className="listBox">
-            {this.state.list.map((todo,index) => (
+            {this.state.list.map((todo,index,key) => (
               <li key={todo.id}>{todo}
                 <input type="checkbox" onChange={(e) => this.toggleChecked(e,index)} checked={this.state.defaultChecked} />
-                <span className="right cancle" onClick={this.cancle.bind(this,index)}>+</span>
+                <span className="right cancle" onClick={this.cancle.bind(this,todo.id)}>+</span>
               </li>
 
             ))}
