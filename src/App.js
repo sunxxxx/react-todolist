@@ -32,12 +32,10 @@ class App extends React.Component {
         checked: false
       }
       this.setState({allList:[...this.state.allList,newItem]})
-      this.setState({activeList:[...this.state.activeList,newItem]})
-
-      if(this.state.activeLable === '0'){
-        this.setState({list:[...this.state.allList,newItem]})
-      }else if(this.state.activeLable === '1'){
-        this.setState({list:[...this.state.activeList,newItem]})
+      this.setState({list:[...this.state.list,newItem]})
+      console.log(this.state.allList)
+      if(this.state.activeLable === '1'){
+        this.changeActive()
       }
       // let {list}= this.state
       // list.push({value:e.target.value})
@@ -52,53 +50,63 @@ class App extends React.Component {
   }
 
   changeActive(){
-    this.state.activeLable = '1'
+    this.setState({activeLable:1})
     let activeList = this.state.allList.filter(todo=>!todo.checked)
-    this.setState({list:activeList})
+    this.setState({list:activeList,activeLable:1})
   }
 
   changeCompleted(){
-    this.state.activeLable = '2'
     let completedList = this.state.allList.filter(todo=>todo.checked);
-    this.setState({list:completedList})
+    this.setState({list:completedList,activeLable:2})
+    console.log(this.state.activeLable)
   }
 
   toggleChecked(e,index){
-    this.state.list[index].checked = e.target.checked
+    // var targetChecked = e.target.checked
+    // this.state.list[index].checked = e.target.checked
     if(this.state.activeLable !== '0'){
       this.state.list.splice(index,1)
-      if(this.state.activeLable !== '1'){
+      if(this.state.activeLable === '1'){
         this.changeActive()
-      }else if(this.state.activeLable !== '2'){
+      }else if(this.state.activeLable === '2'){
         this.changeCompleted()
       }
     }
-    this.setState({list:this.state.list})
+    // this.setState({list:this.state.list})
+
+   
+    const listData = [...this.state.list];   //复制数组--浅拷贝
+    const obj = Object.assign({}, this.state.obj, { age: "21" });
+
+    this.setState({
+        listData: listData.map((item, idx) => idx === index ? {...item, name:  "陈小坏"} : item),
+        obj: obj,                         
+    })
+    console.log(listData)
+
   }
 
   delect(index){
     let allListIndex = this.state.allList.indexOf(this.state.list[index])
-    let activeIndex = this.state.activeList.indexOf(this.state.list[index])
-    console.log(activeIndex)
+    // let activeIndex = this.state.activeList.indexOf(this.state.list[index])
     this.state.list.splice(index,1)
     this.state.allList.splice(allListIndex,1)
-    this.state.activeList.splice(activeIndex,1)
+    // this.state.activeList.splice(activeIndex,1)
     this.setState({list:this.state.list})
     this.setState({allList:this.state.allList})
-    this.setState({activeList:this.state.activeList})
+    // this.setState({activeList:this.state.activeList})
   }
 
   allChecked(){
+    var allChecked 
     if(this.state.list[0].checked === false){
-      for(let i=0;i<this.state.list.length;i++){
-        this.state.list[i].checked = true
-      }
+        allChecked = true        
     }else{
-      for(let i=0;i<this.state.list.length;i++){
-        this.state.list[i].checked = false
-      }
+        allChecked = false   
     }
-    this.setState({list:this.state.list})
+    this.setState({
+        list: this.state.list.map((item) => ({...item, 'checked': allChecked}))
+    })
   }
 
   render(){
