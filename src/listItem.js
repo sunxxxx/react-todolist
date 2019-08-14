@@ -8,6 +8,10 @@ class ListItem extends React.Component{
 
     toggleChecked(e,index){
         this.props.list[index].checked = e.target.checked
+        if(e.target.checked === false){
+            console.log(e.target.checked)
+            this.setState({allChecked:false},()=>{})
+        }
           if(this.props.activeLable === 1){
             var allListIndex = this.props.allList.indexOf(this.props.list[index])
             this.props.list.splice(index,1)
@@ -43,8 +47,8 @@ class ListItem extends React.Component{
             <div className="listBox">
                 {this.props.list.map((todo,index) => (
                 <div key={'li'+todo.id}>
-                    <input type="checkbox" onChange={(e) => this.toggleChecked(e,index)} checked={todo.checked} />
-                    <label className={todo.checked === true ? 'lineThrough': ''}>{todo.value}</label>
+                    <input className="checked item_checked" type="checkbox" onChange={(e) => this.toggleChecked(e,index)} checked={todo.checked} />
+                    <label className={todo.checked === true ? 'line_through': ''}>{todo.value}</label>
                     <span className="right cancle" onClick={(e)=>this.delect(e,index)}>+</span>
                 </div>
 

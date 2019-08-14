@@ -1,9 +1,16 @@
 .App {
-  width: 800px;
+  width: 500px;
 }
 
 header{
   text-align: center;
+}
+
+h1{
+  font-size: 80px;
+  line-height: 1.2;
+  font-weight: lighter;
+  color:#8ba56a8c
 }
 
 .App-header {
@@ -21,15 +28,19 @@ header{
   color: #61dafb;
 }
 
+.Box{
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1)
+}
+
 
 .listBox{
   width: 100%;
-  min-height: 200px;
 }
 
 .listBox>div{
   font-size: 20px;
-  line-height: 2;
+  line-height: 3;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .left{
@@ -45,9 +56,20 @@ header{
 }
 
 .input{
-  width: calc(100% - 30px);
-  height: 40px;
+  font-size: 24px;
+  font-weight: lighter;
+  width: 100%;
+  height: 60px;
   padding-left: 30px;
+  box-sizing: border-box;
+}
+
+.input::-webkit-input-placeholder{
+  color: #ccc;
+}
+
+.input:active,.input:focus{
+  outline: none
 }
 
 .allChecked{
@@ -61,18 +83,22 @@ header{
   transform: rotate(90deg)
 }
 
-.all_checked:checked {
-	background:#1673ff
+.checked:checked {
+  background:#67945d;
+  border: none;
 }
-.all_checked {
-	width:25px;
-	height:25px;
+.checked:focus{
+  outline: none;
+}
+.checked {
+	width:24px;
+	height:24px;
 	background-color:#ffffff;
 	border:solid 1px #dddddd;
 	-webkit-border-radius:50%;
 	border-radius:50%;
 	font-size:0.8rem;
-	margin:0;
+	margin:13px;
 	padding:0;
 	position:relative;
 	display:inline-block;
@@ -84,10 +110,10 @@ header{
 	-webkit-transition:background-color ease 0.1s;
 	transition:background-color ease 0.1s;
 }
-.all_checked:checked::after {
+.checked:checked::after {
 	content:'';
-	top:5px;
-	left:5px;
+	top:6px;
+	left:6px;
 	position:absolute;
 	background:transparent;
 	border:#fff solid 2px;
@@ -100,22 +126,29 @@ header{
 	-webkit-transform:rotate(-45deg);
 	transform:rotate(-45deg);
 }
+.item_checked{
+  margin: 18px;
+}
 
 footer{
-  line-height: 28px;
+  line-height: 50px;
+  height: 50px;
 }
 
 .btns div {
+  line-height: 28px;
   float: left;
-  padding: 0 5px;
+  padding: 0 10px;
   cursor: pointer;
-  margin: 0 10px;
+  margin: 0 5px;
   border-radius: 4px;
+  margin-top: 11px;
 }
 
 .btns div:hover {
   border-radius: 4px;
   background: #a0d095;
+  color: #fff;
 }
 
 .activeBtn{
@@ -124,11 +157,28 @@ footer{
 }
 
 .cancle{
-  transform: rotateZ(45deg)
+  transform: rotateZ(45deg) scale(1.5);
+  margin-right: 20px;
+  cursor: pointer;
 }
 
-.lineThrough{
+.line_through{
   text-decoration: line-through;
+  color: #ccc;
+}
+
+.delect_btn{
+  line-height: 20px;
+  border-radius: 4px;
+  border: 1px solid #a0d095;
+  margin-left: 20px;
+  transition: all .5s;
+  cursor: pointer;
+}
+
+.delect_btn:hover{
+  background: #a0d095;
+  color: #fff;
 }
 
 
