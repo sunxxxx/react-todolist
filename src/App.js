@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import ListItem from './listItem'
 // import { thisExpression } from '@babel/types';
 
 
@@ -14,131 +15,146 @@ class App extends React.Component {
       activeList: [],
       completedList: [],
       activeLable: 0,
+      itemId:0,
+      allChecked: false
     };
-    this.toggleChecked = this.toggleChecked.bind(this)
   }
 
-  componentDidMount(){
-
+  componentWillMount(){
+    const toDoList = window.localStorage.getItem('toDoList') || '[]';
+    const itemId = window.localStorage.getItem('itemId') || 0;
+    this.setState(
+			{
+        list: JSON.parse(toDoList),
+        itemId: JSON.parse(itemId)
+			}
+		);
   }
+
 
 
   add(e){
     if(window.event.keyCode === 13 && e.target.value){
-      var i = this.state.allList.length
       let newItem = {
-        id: i,
+        id: this.state.itemId,
         value:e.target.value,
         checked: false
       }
-      this.setState({allList:[...this.state.allList,newItem]})
-      this.setState({list:[...this.state.list,newItem]})
-      console.log(this.state.allList)
-      if(this.state.activeLable === '1'){
-        this.changeActive()
+
+      let itemExist
+      for(let i=0;i<this.state.allList.length;i++){
+        itemExist = (this.state.allList[i].value === newItem.value?true:false)
       }
-      // let {list}= this.state
-      // list.push({value:e.target.value})
-      // this.setState({list})
-        e.target.value = '' 
+      console.log(itemExist)
+      if(!itemExist){
+        var itemId = this.state.itemId+1
+
+        this.setState({
+          allList:[...this.state.allList,newItem],
+          list:[...this.state.list,newItem],
+          itemId: itemId
+        },()=>{
+          window.localStorage.setItem('toDoList', JSON.stringify(this.state.allList));
+          window.localStorage.setItem('itemId', JSON.stringify(this.state.itemId));
+        })
+
+        // if(this.state.activeLable === '1'){
+        //   this.changeActive()
+        // }
+          e.target.value = '' 
+        }else{
+          console.log('item exist')
+        }
       }
+      
+      // this.setState({list:[...this.state.list,newItem]},()=>{
+        
+      // })
+
+
+      
   }
+
+
 
 
   changeAll(){
-    this.setState({list:this.state.allList})
+    // this.setState({})
+    this.setState({list:this.state.allList,activeLable:0},()=>{
+    })
   }
 
   changeActive(){
-    this.setState({activeLable:1})
+    this.setState({activeLable:1},()=>{
+      console.log(this.state.activeLable)
+    })
+    // this.state.activeLable = 1
     let activeList = this.state.allList.filter(todo=>!todo.checked)
-    this.setState({list:activeList,activeLable:1})
+    this.setState({list:activeList})
   }
 
   changeCompleted(){
+    this.setState({activeLable:2},()=>{
+      console.log(this.state.activeLable)
+    })
+    // this.state.activeLable = 2
     let completedList = this.state.allList.filter(todo=>todo.checked);
-    this.setState({list:completedList,activeLable:2})
-    console.log(this.state.activeLable)
+    this.setState({list:completedList})
   }
 
-  toggleChecked(e,index){
-    // var targetChecked = e.target.checked
-    // this.state.list[index].checked = e.target.checked
-    if(this.state.activeLable !== '0'){
-      this.state.list.splice(index,1)
-      if(this.state.activeLable === '1'){
-        this.changeActive()
-      }else if(this.state.activeLable === '2'){
-        this.changeCompleted()
+
+  allChecked = (e) => {
+    if(this.state.list.length>0){
+      let allChecked = e.target.checked
+      if(this.state.list[0].checked === false){
+          allChecked = true        
+      }else{
+          allChecked = false   
       }
+
+      this.setState({
+          list: this.state.list.map((item) => ({...item, 'checked': allChecked})),
+          allChecked: allChecked
+      },()=>{
+        window.localStorage.setItem('toDoList', JSON.stringify(this.state.list));
+      })
     }
-    // this.setState({list:this.state.list})
-
-   
-    const listData = [...this.state.list];   //复制数组--浅拷贝
-    const obj = Object.assign({}, this.state.obj, { age: "21" });
-
-    this.setState({
-        listData: listData.map((item, idx) => idx === index ? {...item, name:  "陈小坏"} : item),
-        obj: obj,                         
-    })
-    console.log(listData)
-
   }
 
-  delect(index){
-    let allListIndex = this.state.allList.indexOf(this.state.list[index])
-    // let activeIndex = this.state.activeList.indexOf(this.state.list[index])
-    this.state.list.splice(index,1)
-    this.state.allList.splice(allListIndex,1)
-    // this.state.activeList.splice(activeIndex,1)
-    this.setState({list:this.state.list})
-    this.setState({allList:this.state.allList})
-    // this.setState({activeList:this.state.activeList})
-  }
-
-  allChecked(){
-    var allChecked 
-    if(this.state.list[0].checked === false){
-        allChecked = true        
-    }else{
-        allChecked = false   
-    }
-    this.setState({
-        list: this.state.list.map((item) => ({...item, 'checked': allChecked}))
-    })
+  delectAll(){
+    this.setState({list:[]})
+    window.localStorage.setItem('toDoList', []);
   }
 
   render(){
     return (
       <div className="App">
         <header>
-          <p>
-            To DO List
-          </p>
+          <h1>
+            To Do List
+          </h1>
         </header>
         <div className="class">
           <div className="inputBox">
             <input className="input" type="text" onKeyDown={this.add.bind(this)} placeholder="What needs to be done?" />
             <i className="allChecked" onClick={this.allChecked.bind(this)}>></i>
           </div>
-          <div className="listBox">
-            {this.state.list.map((todo,index) => (
-              <div key={'li'+todo.id}>
-                <input type="checkbox" onChange={(e) => this.toggleChecked(e,index)} checked={todo.checked} />
-                <label className={todo.checked === true ? 'lineThrough': ''}>{todo.value}</label>
-                <span className="right cancle" onClick={this.delect.bind(this,index)}>+</span>
-              </div>
 
-            ))}
-          </div>
+
+          <ListItem allList={this.state.allList} list={this.state.list} activeLable={this.state.activeLable} changeActive={this.changeActive} changeCompleted={this.changeCompleted} />
+
         </div>
         <footer>
+            <input className="all_checked left" type="checkbox" onClick={(e)=>this.allChecked(e)}  />
             <div className="left">{this.state.list.length} items left</div>
+            {this.state.allChecked}
+            { this.state.allChecked &&
+              <button onClick={this.delectAll.bind(this)}>Delect All</button>
+            }
             <div className="btns right">
-                <div onClick={this.changeAll.bind(this)}>All</div>
-                <div onClick={this.changeActive.bind(this)}>Active</div>
-                <div onClick={this.changeCompleted.bind(this)}>Completed</div>
+                <div className={this.state.activeLable === 0 ? 'activeBtn':''} onClick={this.changeAll.bind(this)}>All</div>
+                <div className={this.state.activeLable === 1 ? 'activeBtn':''} onClick={this.changeActive.bind(this)}>Active</div>
+                <div className={this.state.activeLable === 2 ? 'activeBtn':''} onClick={this.changeCompleted.bind(this)}>Completed</div>
             </div>
         </footer>
       </div>
