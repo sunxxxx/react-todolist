@@ -4,6 +4,9 @@ import React from 'react'
 class ListItem extends React.Component{
     constructor(props){
         super(props)
+        this.state={
+            draging:null
+        }
     }
 
     toggleChecked(e,index){
@@ -58,11 +61,40 @@ class ListItem extends React.Component{
         }
     }
 
+    onDragStart(e){
+        //firefox设置了setData后元素才能拖动
+        e.dataTransfer.setData("te", e.target.innerText); //不能使用text，firefox会打开新tab
+        this.state.draging = e.target;
+    }
+
+    onDragOver(e){
+        e.preventDefault();
+        var target = e.target;
+        if (target.nodeName === "DIV"&&target !== this.state.draging) {
+            if (this._index(this.state.draging) < this._index(target)) {
+                target.parentNode.insertBefore(this.state.draging,target.nextSibling);
+            } else {
+                target.parentNode.insertBefore(this.state.draging, target);
+            }
+        }
+    }
+
+    _index(el) {
+        var index = 0;
+        if (!el || !el.parentNode) {
+            return -1;
+        }
+        while (el && (el = el.previousElementSibling)) {
+            index++;
+        }
+        return index;
+    }
+
     render(){
         return (
-            <div className="listBox">
+            <div className="listBox" onDragStart={this.onDragStart.bind(this)} onDragOver={this.onDragOver.bind(this)}>
                 {this.props.list.map((todo,index) => (
-                <div key={'li'+todo.id}>
+                <div key={todo.id} draggable="true">
                     <input className="checked item_checked" type="checkbox" onChange={(e) => this.toggleChecked(e,index)} checked={todo.checked} />
                     <label className={todo.checked === true ? 'line_through': ''}>{todo.value}</label>
                     <span className="right cancle" onClick={(e)=>this.delect(e,index)}>+</span>

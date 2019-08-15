@@ -1,5 +1,5 @@
 .App {
-  width: 500px;
+  width: 600px;
 }
 
 header{
@@ -28,8 +28,15 @@ h1{
   color: #61dafb;
 }
 
+.project{
+  float: left;
+}
+
+
+
 .Box{
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1)
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
+  float: right;
 }
 
 

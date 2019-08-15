@@ -153,29 +153,37 @@ class App extends React.Component {
             todos
           </h1>
         </header>
-        <div className="Box">
-          <div className="inputBox">
-            <input className="input" type="text" onKeyDown={this.add.bind(this)} placeholder="What needs to be done?" />
-            {/* <i className="allChecked" onClick={this.allChecked.bind(this)}>></i> */}
-          </div>
-
-
-          <ListItem allList={this.state.allList} list={this.state.list} activeLable={this.state.activeLable} changeActive={this.changeActive} changeCompleted={this.changeCompleted} isAllChecked={this.isAllChecked.bind(this)} />
-
-        
-            <footer>
-                <input className="checked left" type="checkbox" onChange={(e)=>this.allChecked(e)} checked={this.state.allChecked}  />
-                <div className="left">{this.state.list.length} items left</div>
-            
-                { this.state.allChecked &&
-                <button className="delect_btn" onClick={this.delectAll.bind(this)}>Delect All</button>
-                }
-                <div className="btns right">
-                    <div className={this.state.activeLable === 0 ? 'activeBtn':''} onClick={this.changeAll.bind(this)}>All</div>
-                    <div className={this.state.activeLable === 1 ? 'activeBtn':''} onClick={this.changeActive.bind(this)}>Active</div>
-                    <div className={this.state.activeLable === 2 ? 'activeBtn':''} onClick={this.changeCompleted.bind(this)}>Completed</div>
+        <div className="container">
+            <div className="project">
+                <ul>
+                    <li>project1</li>
+                    <li>project2</li>
+                </ul>
+            </div>
+            <div className="Box">
+                <div className="inputBox">
+                    <input className="input" type="text" onKeyDown={this.add.bind(this)} placeholder="What needs to be done?" />
+                    {/* <i className="allChecked" onClick={this.allChecked.bind(this)}>></i> */}
                 </div>
-            </footer>
+
+
+                <ListItem allList={this.state.allList} list={this.state.list} activeLable={this.state.activeLable} changeActive={this.changeActive} changeCompleted={this.changeCompleted} isAllChecked={this.isAllChecked.bind(this)} />
+
+            
+                <footer>
+                    <input className="checked left" type="checkbox" onChange={(e)=>this.allChecked(e)} checked={this.state.allChecked}  />
+                    <div className="left">{this.state.list.length} items left</div>
+                
+                    { this.state.allChecked &&
+                    <button className="delect_btn" onClick={this.delectAll.bind(this)}>Delect All</button>
+                    }
+                    <div className="btns right">
+                        <div className={this.state.activeLable === 0 ? 'activeBtn':''} onClick={this.changeAll.bind(this)}>All</div>
+                        <div className={this.state.activeLable === 1 ? 'activeBtn':''} onClick={this.changeActive.bind(this)}>Active</div>
+                        <div className={this.state.activeLable === 2 ? 'activeBtn':''} onClick={this.changeCompleted.bind(this)}>Completed</div>
+                    </div>
+                </footer>
+            </div>
         </div>
       </div>
     );
