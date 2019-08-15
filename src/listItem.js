@@ -9,6 +9,7 @@ class ListItem extends React.Component{
     toggleChecked(e,index){
         this.props.list[index].checked = e.target.checked
         if(e.target.checked === false){
+            //设置全选是否选中状态
             this.props.isAllChecked(false)
         }else{
             let allChecked = this.props.list.every( item => item.checked === true)

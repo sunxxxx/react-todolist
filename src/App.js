@@ -11,9 +11,6 @@ class App extends React.Component {
     this.state = {
       list: [],
       allList: [],
-      checkList: [],
-      activeList: [],
-      completedList: [],
       activeLable: 0,
       itemId:0,
       allChecked: false
@@ -24,12 +21,12 @@ class App extends React.Component {
     const toDoList = window.localStorage.getItem('toDoList') || '[]';
     const itemId = window.localStorage.getItem('itemId') || 0;
     this.setState(
-		{
+		  {
             list: JSON.parse(toDoList),
             allList: JSON.parse(toDoList),
             itemId: JSON.parse(itemId)
-		}
-	);
+		  }
+	  );
   }
 
   componentDidMount(){
