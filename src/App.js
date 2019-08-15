@@ -33,18 +33,13 @@ class App extends React.Component {
   }
 
   componentDidMount(){
-    for(let i=0;i<this.state.list.length;i++){
-        if(!this.state.list[i].checked){
-            this.setState({allChecked:false},()=>{})
-            break;
-        }else{
-            this.setState({allChecked:true},()=>{})
-        }
-    }
-    
+    let allChecked = this.state.list.every( item => item.checked === true)
+    this.setState({allChecked:allChecked},()=>{})
   }
 
-
+  isAllChecked(data){
+    this.setState({allChecked:data})
+  }
 
   add(e){
     if(window.event.keyCode === 13 && e.target.value){
@@ -54,22 +49,15 @@ class App extends React.Component {
         checked: false
       }
 
-      let itemExist
-      for(let i=0;i<this.state.allList.length;i++){
-          if(this.state.allList[i].value === newItem.value){
-            itemExist = true
-            break;
-          }else{
-            itemExist = false
-          }
-      }
+      let itemExist = this.state.list.some( item => item.value === newItem.value)
       if(!itemExist){
         var itemId = this.state.itemId+1
 
         this.setState({
           allList:[...this.state.allList,newItem],
           list:[...this.state.list,newItem],
-          itemId: itemId
+          itemId: itemId,
+          allChecked: false
         },()=>{
           window.localStorage.setItem('toDoList', JSON.stringify(this.state.allList));
           window.localStorage.setItem('itemId', JSON.stringify(this.state.itemId));
@@ -86,53 +74,70 @@ class App extends React.Component {
   }
 
 
-
-
   changeAll(){
-    // this.setState({})
-    this.setState({list:this.state.allList,activeLable:0},()=>{
-    })
+    let allChecked = this.state.allList.every( item => item.checked === true)
+    this.setState({
+      list:this.state.allList,
+      activeLable:0,
+      allChecked:allChecked
+    },()=>{})
   }
 
   changeActive(){
-    this.setState({activeLable:1},()=>{
-      console.log(this.state.activeLable)
-    })
-    
     let activeList = this.state.allList.filter(todo=>!todo.checked)
-    this.setState({list:activeList})
+    this.setState({
+      activeLable:1,
+      list:activeList,
+      allChecked: false,
+    },()=>{})
   }
 
   changeCompleted(){
-    this.setState({activeLable:2},()=>{
-      console.log(this.state.activeLable)
-    })
-    // this.state.activeLable = 2
     let completedList = this.state.allList.filter(todo=>todo.checked);
-    this.setState({list:completedList})
+    this.setState({
+      activeLable:2,
+      list:completedList,
+      allChecked: false,
+    },()=>{})
   }
 
 
   allChecked = (e) => {
-    if(this.state.list.length>0){
-      let allChecked = e.target.checked
-
-      for(let i=0;i<this.state.list.length;i++){
-          if(!this.state.list[i].checked){
-            allChecked = true;
-            break;
-          }else{
-            allChecked = false
-          }
-      }
-
+    if(this.state.activeLable === 1){
       this.setState({
-          list: this.state.list.map((item) => ({...item, 'checked': allChecked})),
-          allChecked: allChecked
+        allList: this.state.allList.map((item) => ({...item, 'checked': true})),
+        list: []
       },()=>{
-        window.localStorage.setItem('toDoList', JSON.stringify(this.state.list));
+        window.localStorage.setItem('toDoList', JSON.stringify(this.state.allList));
       })
+    }else if(this.state.activeLable === 2){
+      this.setState({
+        allList: this.state.allList.map((item) => ({...item, 'checked': false})),
+        list: []
+      },()=>{
+        window.localStorage.setItem('toDoList', JSON.stringify(this.state.allList));
+      })
+    }else{
+      if(this.state.list.length>0){
+        let allChecked = e.target.checked
+  
+        let itemAllChecked = this.state.list.every( item => item.checked === true)
+  
+        if(!itemAllChecked){
+          allChecked = true;
+        }else{
+          allChecked = false
+        }
+  
+        this.setState({
+            list: this.state.list.map((item) => ({...item, 'checked': allChecked})),
+            allChecked: allChecked
+        },()=>{
+          window.localStorage.setItem('toDoList', JSON.stringify(this.state.list));
+        })
+      }
     }
+    
   }
 
   delectAll(){
@@ -158,7 +163,7 @@ class App extends React.Component {
           </div>
 
 
-          <ListItem allList={this.state.allList} list={this.state.list} activeLable={this.state.activeLable} changeActive={this.changeActive} changeCompleted={this.changeCompleted} />
+          <ListItem allList={this.state.allList} list={this.state.list} activeLable={this.state.activeLable} changeActive={this.changeActive} changeCompleted={this.changeCompleted} isAllChecked={this.isAllChecked.bind(this)} />
 
         
             <footer>

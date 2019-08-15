@@ -9,37 +9,52 @@ class ListItem extends React.Component{
     toggleChecked(e,index){
         this.props.list[index].checked = e.target.checked
         if(e.target.checked === false){
-            console.log(e.target.checked)
-            this.setState({allChecked:false},()=>{})
+            this.props.isAllChecked(false)
+        }else{
+            let allChecked = this.props.list.every( item => item.checked === true)
+            if(allChecked){
+                this.props.isAllChecked(true)
+            }
         }
+
           if(this.props.activeLable === 1){
             var allListIndex = this.props.allList.indexOf(this.props.list[index])
             this.props.list.splice(index,1)
             this.props.allList[allListIndex].checked = e.target.checked
+            this.props.isAllChecked(false)
           }else if(this.props.activeLable === 2){
             this.props.list.splice(index,1)
+            this.props.isAllChecked(false)
           }
           this.setState({
               list:this.props.list,
               allList: this.props.allList,
             },()=>{
-            window.localStorage.setItem('toDoList', JSON.stringify(this.props.list));
+            window.localStorage.setItem('toDoList', JSON.stringify(this.props.allList));
           })
     
       }
 
-    delect(index){
-        console.log(this.props.allList)
-        let allListIndex = this.props.allList.indexOf(this.props.list[index])
-        this.props.list.splice(index,1)
-        this.props.allList.splice(allListIndex,1)
-        this.setState({
-            list:this.props.list,
-            allList:this.props.allList
-        },()=>{
-            window.localStorage.setItem('toDoList', JSON.stringify(this.props.list));
-        })
-      
+    delect(e,index){
+        var listIndex = this.props.allList.indexOf(this.props.list[index])
+        if(this.props.activeLable === 0){
+            this.props.list.splice(index,1)
+            this.setState({
+                list:this.props.list,
+                allList:this.props.list
+            },()=>{
+                window.localStorage.setItem('toDoList', JSON.stringify(this.props.list));
+            })
+        }else{
+            this.props.list.splice(index,1)
+            this.props.allList.splice(listIndex,1)
+            this.setState({
+                list:this.props.list,
+                allList:this.props.allList
+            },()=>{
+                window.localStorage.setItem('toDoList', JSON.stringify(this.props.allList));
+            })
+        }
     }
 
     render(){
