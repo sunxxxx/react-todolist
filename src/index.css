@@ -5,7 +5,6 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f5f5f5;
   color: #4d4d4d;
 }
 
@@ -14,10 +13,10 @@ code {
     monospace;
 }
 
-#root{
+/* #root{
   display: flex;
   justify-content: center;
   align-items: center;
-}
+} */
 
 

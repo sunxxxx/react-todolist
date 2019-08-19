@@ -34,7 +34,7 @@ class ListItem extends React.Component{
               list:this.props.list,
               allList: this.props.allList,
             },()=>{
-            window.localStorage.setItem('toDoList', JSON.stringify(this.props.allList));
+            // window.localStorage.setItem('toDoList', JSON.stringify(this.props.allList));
           })
     
       }
@@ -47,7 +47,7 @@ class ListItem extends React.Component{
                 list:this.props.list,
                 allList:this.props.list
             },()=>{
-                window.localStorage.setItem('toDoList', JSON.stringify(this.props.list));
+                // window.localStorage.setItem('toDoList', JSON.stringify(this.props.list));
             })
         }else{
             this.props.list.splice(index,1)
@@ -56,7 +56,7 @@ class ListItem extends React.Component{
                 list:this.props.list,
                 allList:this.props.allList
             },()=>{
-                window.localStorage.setItem('toDoList', JSON.stringify(this.props.allList));
+                // window.localStorage.setItem('toDoList', JSON.stringify(this.props.allList));
             })
         }
     }
@@ -93,7 +93,7 @@ class ListItem extends React.Component{
     render(){
         return (
             <div className="listBox" onDragStart={this.onDragStart.bind(this)} onDragOver={this.onDragOver.bind(this)}>
-                {this.props.list.map((todo,index) => (
+                {this.props.list && this.props.list.map((todo,index) => (
                 <div key={todo.id} draggable="true">
                     <input className="checked item_checked" type="checkbox" onChange={(e) => this.toggleChecked(e,index)} checked={todo.checked} />
                     <label className={todo.checked === true ? 'line_through': ''}>{todo.value}</label>
