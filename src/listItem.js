@@ -61,13 +61,13 @@ class ListItem extends React.Component{
         }
     }
 
-    onDragStart(e){
+    onDragStart(e,index){
         //firefox设置了setData后元素才能拖动
         e.dataTransfer.setData("te", e.target.innerText); //不能使用text，firefox会打开新tab
         this.state.draging = e.target;
     }
 
-    onDragOver(e){
+    onDragOver(e,index){
         e.preventDefault();
         var target = e.target;
         if (target.nodeName === "DIV"&&target !== this.state.draging) {
@@ -78,6 +78,12 @@ class ListItem extends React.Component{
             }
         }
     }
+
+    onDragEnd(e,index){
+        console.log(e,index)
+    }
+
+    
 
     _index(el) {
         var index = 0;
@@ -92,9 +98,9 @@ class ListItem extends React.Component{
 
     render(){
         return (
-            <div className="listBox" onDragStart={this.onDragStart.bind(this)} onDragOver={this.onDragOver.bind(this)}>
+            <div className="listBox">
                 {this.props.list && this.props.list.map((todo,index) => (
-                <div key={todo.id} draggable="true">
+                <div key={todo.id} draggable="true" onDragStart={(e)=>this.onDragStart(e,index)} onDragOver={this.onDragOver.bind(this)} onDragEnd={(e)=>this.onDragEnd(e,index)}>
                     <input className="checked item_checked" type="checkbox" onChange={(e) => this.toggleChecked(e,index)} checked={todo.checked} />
                     <label className={todo.checked === true ? 'line_through': ''}>{todo.value}</label>
                     <span className="right cancle" onClick={(e)=>this.delect(e,index)}>+</span>
