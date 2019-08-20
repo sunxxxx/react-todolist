@@ -24,6 +24,7 @@ class App extends React.Component {
     const toDoList = window.localStorage.getItem('toDoList') || "[]";
     const projects = window.localStorage.getItem('projects') || "[]";
     const itemId = window.localStorage.getItem('itemId') || 0;
+    
     var list 
     if((JSON.parse(toDoList))[this.state.projectIndex] != null){
       list = (JSON.parse(toDoList))[this.state.projectIndex]
@@ -37,13 +38,11 @@ class App extends React.Component {
       itemId: JSON.parse(itemId),
       projects: JSON.parse(projects)
     });
-    
   }
 
   componentDidMount(){
     let allChecked = this.state.list.every( item => item.checked === true)
     this.setState({allChecked:allChecked})
-    console.log(this.state.list)
   }
 
   componentDidUpdate(){
@@ -263,6 +262,7 @@ class App extends React.Component {
                 
                 <ListItem allList={this.state.toDoList[this.state.projectIndex]} projectIndex={this.state.projectIndex} list={this.state.list} activeLable={this.state.activeLable} changeActive={this.changeActive} changeCompleted={this.changeCompleted} isAllChecked={this.isAllChecked.bind(this)} />
 
+<<<<<<< HEAD
                 {this.state.projects.length>0 &&
                 <footer>
                     <input className="checked left" type="checkbox" onChange={(e)=>this.allChecked(e)} checked={this.state.allChecked}  />
@@ -285,6 +285,28 @@ class App extends React.Component {
                     <h3>Please add your project first!</h3>
                   </footer>
                 }
+=======
+                
+                {this.state.projects.length>0 &&
+                    <footer>
+                        <input className="checked left" type="checkbox" onChange={(e)=>this.allChecked(e)} checked={this.state.allChecked}  />
+                        {this.state.list && 
+                        <div className="left">{this.state.list.length} items left</div>
+                        }
+
+                        { this.state.allChecked &&
+                        <button className="delect_btn" onClick={this.delectAll.bind(this)}>Delect All</button>
+                        }
+                        <div className="btns right">
+                            <div className={this.state.activeLable === 0 ? "activeBtn":""} onClick={this.changeAll.bind(this)}>All</div>
+                            <div className={this.state.activeLable === 1 ? "activeBtn":""} onClick={this.changeActive.bind(this)}>Active</div>
+                            <div className={this.state.activeLable === 2 ? "activeBtn":""} onClick={this.changeCompleted.bind(this)}>Completed</div>
+                        </div>
+                    </footer>
+                }
+               
+                
+>>>>>>> dbbdd551aba64da279249ca794b3bab23420e9de
             </div>
         </div>
       </div>
