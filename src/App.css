@@ -220,6 +220,13 @@ footer{
   height: 50px;
 }
 
+footer h3{
+  color: #ccc;
+  font-weight: bold;
+  text-align: center;
+}
+
+
 .btns div {
   line-height: 28px;
   float: left;
