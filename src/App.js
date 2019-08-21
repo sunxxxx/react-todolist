@@ -15,7 +15,7 @@ class App extends React.Component {
       itemId:0,
       allChecked: false,
       projects:[],
-      projectIndex: 1,
+      projectIndex: 0,
       showAddInput: false
     };
   }
@@ -57,39 +57,15 @@ class App extends React.Component {
   add(e){
     if(window.event.keyCode === 13 && e.target.value){
       let newItem = {
-        id: this.state.itemId,
+        id: this.state.projectIndex.toString() + '-' + this.state.itemId,
         value:e.target.value,
         checked: false
       }
-
+      var itemId = this.state.itemId+1
+      var allList
       if(this.state.list){
       let itemExist = this.state.list.some( item => item.value === newItem.value)
         if(!itemExist && this.state.list){
-          var itemId = this.state.itemId+1
-          var allList
-          if(this.state.toDoList[this.state.projectIndex]){
-            allList = this.state.toDoList[this.state.projectIndex]
-          }else{
-            allList = this.state.toDoList[this.state.projectIndex] = new Array()
-          }
-          allList.unshift(newItem)
-          
-          this.setState({
-            toDoList:this.state.toDoList,
-            list:[...this.state.list,newItem].reverse(),
-            itemId: itemId,
-            allChecked: false
-          })
-
-          // if(this.state.activeLable === '1'){
-          //   this.changeActive()
-          // }
-            e.target.value = '' 
-          }else{
-            console.log('item exist')
-          }
-        }else{
-          var allList
           if(this.state.toDoList[this.state.projectIndex]){
             allList = this.state.toDoList[this.state.projectIndex]
           }else{
@@ -107,6 +83,20 @@ class App extends React.Component {
           // if(this.state.activeLable === '1'){
           //   this.changeActive()
           // }
+            e.target.value = '' 
+          }else{
+            console.log('item exist')
+          }
+        }else{
+          allList = this.state.toDoList[this.state.projectIndex] = new Array()
+          allList.unshift(newItem)
+          
+          this.setState({
+            toDoList:this.state.toDoList,
+            list:allList,
+            itemId: itemId,
+            allChecked: false
+          })
             e.target.value = '' 
         }
       } 
@@ -200,12 +190,15 @@ class App extends React.Component {
       projectIndex:index,
       list: this.state.toDoList[this.state.projectIndex]
     })
-    let itemAllChecked = this.state.list.every( item => item.checked === true)
-    if(itemAllChecked){
-      this.setState({allChecked: true})
-    }else{
-      this.setState({allChecked: false})
+    if(this.state.list){
+      let itemAllChecked = this.state.list.every( item => item.checked === true)
+      if(itemAllChecked){
+        this.setState({allChecked: true})
+      }else{
+        this.setState({allChecked: false})
+      }
     }
+    
   }
 
   newProject(e){
@@ -228,6 +221,30 @@ class App extends React.Component {
     }else{
       console.log("project exist!")
     }
+  }
+
+  changeParentState(val){
+    var allList = this.state.toDoList[this.state.projectIndex] = val
+    var list
+    switch (this.state.activeLable) {
+      case 0:
+        list = allList
+        break;
+      case 1:
+        list = this.state.toDoList[this.state.projectIndex].filter(todo=>!todo.checked)
+        break;
+      case 2:
+        list = this.state.toDoList[this.state.projectIndex].filter(todo=>todo.checked)
+        break;
+      default:
+          list = allList;
+    }
+    this.setState({
+      toDoList: this.state.toDoList,
+      allList: allList,
+      list: list
+    })
+
   }
 
   render(){
@@ -260,13 +277,15 @@ class App extends React.Component {
                 </div>
 
                 
-                <ListItem allList={this.state.toDoList[this.state.projectIndex]} projectIndex={this.state.projectIndex} list={this.state.list} activeLable={this.state.activeLable} changeActive={this.changeActive} changeCompleted={this.changeCompleted} isAllChecked={this.isAllChecked.bind(this)} />
+                <ListItem changeParentState={this.changeParentState.bind(this)} toDoList={this.state.toDoList} projectIndex={this.state.projectIndex} list={this.state.list} activeLable={this.state.activeLable} changeActive={this.changeActive} changeCompleted={this.changeCompleted} isAllChecked={this.isAllChecked.bind(this)} />
 
                 {this.state.projects.length>0 &&
                 <footer>
-                    <input className="checked left" type="checkbox" onChange={(e)=>this.allChecked(e)} checked={this.state.allChecked}  />
                     {this.state.list && 
-                      <div className="left">{this.state.list.length} items left</div>
+                      <div>
+                        <input className="checked left" type="checkbox" onChange={(e)=>this.allChecked(e)} checked={this.state.allChecked}  />
+                        <div className="left">{this.state.list.length} items left</div>
+                      </div>
                     }
 
                     { this.state.allChecked &&
