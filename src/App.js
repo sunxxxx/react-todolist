@@ -46,24 +46,6 @@ class App extends React.Component {
   }
 
   componentDidMount(){
-    const toDoList = window.localStorage.getItem('toDoList') || "[]";
-    const projects = window.localStorage.getItem('projects') || "[]";
-    const itemId = window.localStorage.getItem('itemId') || 0;
-    
-    var list 
-    if((JSON.parse(toDoList))[this.state.projectIndex] != null){
-      list = (JSON.parse(toDoList))[this.state.projectIndex]
-    }else{
-      list = new Array()
-    }
-
-    this.setState({
-      list: list,
-      toDoList: JSON.parse(toDoList),
-      itemId: JSON.parse(itemId),
-      projects: JSON.parse(projects)
-    });
-
     let allChecked = this.state.list.every( item => item.checked === true)
     this.setState({allChecked:allChecked})
   }
@@ -71,6 +53,7 @@ class App extends React.Component {
   componentDidUpdate(){
     window.localStorage.setItem('toDoList', JSON.stringify(this.state.toDoList));
     window.localStorage.setItem('itemId', JSON.stringify(this.state.itemId));
+    window.localStorage.setItem('projects', JSON.stringify(this.state.projects));
   }
 
   isAllChecked(data){
@@ -153,42 +136,47 @@ class App extends React.Component {
     })
   }
 
-
+//判断是否当前ListItem全选
   allChecked = (e) => {
+    var toDoList = this.state.toDoList; 
+    var allList = toDoList[this.state.projectIndex]
     if(this.state.activeLable === 1){
+        for(let i=0;i<allList.length;i++){
+            allList[i].checked = true
+        }
       this.setState({
-        allList: this.state.toDoList[this.state.projectIndex].map((item) => ({...item, 'checked': true})),
-        list: []
+        allList: allList,
+        list: [],
+        toDoList: toDoList
       })
     }else if(this.state.activeLable === 2){
+        for(let i=0;i<allList.length;i++){
+            allList[i].checked = false
+        }
       this.setState({
-        allList: this.state.toDoList[this.state.projectIndex].map((item) => ({...item, 'checked': false})),
-        list: []
+        allList: allList,
+        list: [],
+        toDoList: toDoList
       })
     }else{
       if(this.state.list.length>0){
         let allChecked = e.target.checked
-  
         let itemAllChecked = this.state.list.every( item => item.checked === true)
-  
         if(!itemAllChecked){
           allChecked = true;
         }else{
           allChecked = false
         }
-
-        let todoList = this.state.toDoList; 
-        let project = todoList[this.state.projectIndex]
-        project.map((item)=>({...item,'checked': allChecked}))
         
-        for(let i=0;i<project.length;i++){
-          project[i].checked = allChecked
+        let list = toDoList[this.state.projectIndex]
+        for(let i=0;i<list.length;i++){
+            list[i].checked = allChecked
         }
     
         this.setState({
-            list: this.state.list.map((item) => ({...item, 'checked': allChecked})),
+            list: list,
             allChecked: allChecked,
-            toDoList: todoList
+            toDoList: toDoList
         })
       }
     }  
@@ -203,17 +191,18 @@ class App extends React.Component {
         toDoList: todoList,
     })
   }
-
+//新建project按钮事件
   addProject(){
     this.setState({showAddInput: true})
   }
-
+//切换projects
   changeProject(index){
     this.setState({
       projectIndex:index,
       allList:this.state.toDoList[this.state.projectIndex],
-      list: this.state.toDoList[this.state.projectIndex]
-    },()=>{})
+      list: this.state.toDoList[this.state.projectIndex],
+      activeLable:0
+    }) //??没有实时更新
     if(this.state.list){
       let itemAllChecked = this.state.list.every( item => item.checked === true)
       if(itemAllChecked){
@@ -224,7 +213,7 @@ class App extends React.Component {
     }
     
   }
-
+//新建project保存
   newProject(e){
     let length = this.state.projects.length
     let newItem = {
@@ -238,8 +227,6 @@ class App extends React.Component {
         this.setState({
           showAddInput: false,
           projects:[...this.state.projects,newItem]
-        },()=>{
-          window.localStorage.setItem('projects', JSON.stringify(this.state.projects));
         })
       }
     }else{
@@ -262,7 +249,7 @@ class App extends React.Component {
         list = this.state.toDoList[this.state.projectIndex].filter(todo=>todo.checked)
         break;
       default:
-          list = allList;
+        list = allList;
     }
     this.setState({
       toDoList: this.state.toDoList,
@@ -271,18 +258,18 @@ class App extends React.Component {
     })
   }
 
+
+  //拖拉排序
   onDragStart(e){
     //firefox设置了setData后元素才能拖动
     e.dataTransfer.setData("Text", e.target.innerText); //不能使用text，firefox会打开新tab
     this.state.draging = e.target;
     var index
     for(let i=0; i<this.state.list.length; i++){
-      console.log(this.state.list[i].value)
       if(this.state.list[i].value === e.target.childNodes[1].innerHTML){
         index = i
       }
     }
-    
     var dragIndex = this.state.toDoList[this.state.projectIndex].indexOf(this.state.list[index])
     this.setState({
         dragIndex:dragIndex,
@@ -316,7 +303,7 @@ class App extends React.Component {
       }
       this.changeParentState(allList) 
   }
-
+//获取拖拉元素index，判断插入位置
   _index(el) {
       var index = 0;
       if (!el || !el.parentNode) {
@@ -358,7 +345,7 @@ class App extends React.Component {
                 </div>
                 <div className="listBox" onDragStart={(e)=>{this.onDragStart(e)}} onDragOver={(e)=>{this.onDragOver(e)}} onDragEnd={(e)=>{this.onDragEnd(e)}}>
                   {this.state.list && this.state.list.map((todo,index) => (
-                    <ListItem  key={todo.id} todo={todo} index={index} toDoList={this.state.toDoList} projectIndex={this.state.projectIndex} list={this.state.list} activeLable={this.state.activeLable} isAllChecked={this.isAllChecked.bind(this)} changeParentState={this.changeParentState} />
+                    <ListItem  key={todo.id} todo={todo} index={index} toDoList={this.state.toDoList} projectIndex={this.state.projectIndex} list={this.state.list} activeLable={this.state.activeLable} isAllChecked={this.isAllChecked.bind(this)} changeParentState={this.changeParentState.bind(this)} />
                   ))}
                 </div>
 

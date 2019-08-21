@@ -4,12 +4,14 @@ import React from 'react'
 class ListItem extends React.Component{
     constructor(props){
         super(props)
-        this.state={
-            
-        }
     }
 
+    componentWillReceiveProps(){} //??什么情况会用到
+
     toggleChecked(e,index){
+        var allList = this.props.toDoList[this.props.projectIndex]
+        var allListIndex = allList.indexOf(this.props.list[index])  // ？-1
+
         this.props.list[index].checked = e.target.checked
         if(e.target.checked === false){
             //设置全选是否选中状态
@@ -24,10 +26,10 @@ class ListItem extends React.Component{
         if(this.props.activeLable !== 0){
             this.props.list.splice(index,1)
             this.props.isAllChecked(false)
+        }else{
+            this.props.changeParentState(allList)
         }
-        this.setState({
-            list:this.props.list
-        })
+        // this.setState({})  // ??setState触发更新,即使参数为空
     
       }
 
@@ -38,7 +40,6 @@ class ListItem extends React.Component{
         allList.splice(listIndex,1)
         window.localStorage.setItem('toDoList', JSON.stringify(this.props.toDoList));
         this.props.changeParentState(allList)
-        console.log(this.props.toDoList)
     }
 
 
