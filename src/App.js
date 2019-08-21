@@ -16,7 +16,10 @@ class App extends React.Component {
       allChecked: false,
       projects:[],
       projectIndex: 0,
-      showAddInput: false
+      showAddInput: false,
+      draging:null,
+      dragIndex: 0,
+      currentIndex:0
     };
   }
 
@@ -37,10 +40,30 @@ class App extends React.Component {
       toDoList: JSON.parse(toDoList),
       itemId: JSON.parse(itemId),
       projects: JSON.parse(projects)
+    },()=>{
+      console.log(this.state.toDoList)
     });
   }
 
   componentDidMount(){
+    const toDoList = window.localStorage.getItem('toDoList') || "[]";
+    const projects = window.localStorage.getItem('projects') || "[]";
+    const itemId = window.localStorage.getItem('itemId') || 0;
+    
+    var list 
+    if((JSON.parse(toDoList))[this.state.projectIndex] != null){
+      list = (JSON.parse(toDoList))[this.state.projectIndex]
+    }else{
+      list = new Array()
+    }
+
+    this.setState({
+      list: list,
+      toDoList: JSON.parse(toDoList),
+      itemId: JSON.parse(itemId),
+      projects: JSON.parse(projects)
+    });
+
     let allChecked = this.state.list.every( item => item.checked === true)
     this.setState({allChecked:allChecked})
   }
@@ -188,8 +211,9 @@ class App extends React.Component {
   changeProject(index){
     this.setState({
       projectIndex:index,
+      allList:this.state.toDoList[this.state.projectIndex],
       list: this.state.toDoList[this.state.projectIndex]
-    })
+    },()=>{})
     if(this.state.list){
       let itemAllChecked = this.state.list.every( item => item.checked === true)
       if(itemAllChecked){
@@ -224,8 +248,9 @@ class App extends React.Component {
   }
 
   changeParentState(val){
-    var allList = this.state.toDoList[this.state.projectIndex] = val
+    var allList  = val
     var list
+    this.state.toDoList[this.state.projectIndex] = allList
     switch (this.state.activeLable) {
       case 0:
         list = allList
@@ -244,7 +269,63 @@ class App extends React.Component {
       allList: allList,
       list: list
     })
+  }
 
+  onDragStart(e){
+    //firefox设置了setData后元素才能拖动
+    e.dataTransfer.setData("Text", e.target.innerText); //不能使用text，firefox会打开新tab
+    this.state.draging = e.target;
+    var index
+    for(let i=0; i<this.state.list.length; i++){
+      console.log(this.state.list[i].value)
+      if(this.state.list[i].value === e.target.childNodes[1].innerHTML){
+        index = i
+      }
+    }
+    
+    var dragIndex = this.state.toDoList[this.state.projectIndex].indexOf(this.state.list[index])
+    this.setState({
+        dragIndex:dragIndex,
+        currentIndex:index
+    })
+    
+  }
+
+  onDragOver(e){
+      e.preventDefault();
+      var target = e.target;
+      if (target !== this.state.draging) {
+        console.log(this._index(this.state.draging),this._index(target))
+          if (this._index(this.state.draging) < this._index(target)) {
+              target.parentNode.insertBefore(this.state.draging,target.nextSibling);
+          } else {
+              target.parentNode.insertBefore(this.state.draging, target);
+          }
+      }
+  }
+
+  onDragEnd(e){
+      var allList = this.state.toDoList[this.state.projectIndex]
+      var dragItem = allList[this.state.dragIndex]
+      if (this.state.dragIndex < this._index(e.target)) {
+          allList.splice(this.state.dragIndex,1)
+          allList.splice(this._index(this.state.draging),0,dragItem) 
+      }else if(this.state.dragIndex > this._index(e.target)){
+          allList.splice(this.state.dragIndex,1)
+          allList.splice(this._index(e.target),0,dragItem) 
+      }
+      this.changeParentState(allList) 
+  }
+
+  _index(el) {
+      var index = 0;
+      if (!el || !el.parentNode) {
+          return -1;
+      }
+      while (el && (el = el.previousElementSibling)) {
+          index++;
+      }
+      return index;
   }
 
   render(){
@@ -275,9 +356,11 @@ class App extends React.Component {
                     <input className="input" type="text" onKeyDown={this.add.bind(this)} placeholder="What needs to be done?" />
                     {/* <i className="allChecked" onClick={this.allChecked.bind(this)}>></i> */}
                 </div>
-
-                
-                <ListItem changeParentState={this.changeParentState.bind(this)} toDoList={this.state.toDoList} projectIndex={this.state.projectIndex} list={this.state.list} activeLable={this.state.activeLable} changeActive={this.changeActive} changeCompleted={this.changeCompleted} isAllChecked={this.isAllChecked.bind(this)} />
+                <div className="listBox" onDragStart={(e)=>{this.onDragStart(e)}} onDragOver={(e)=>{this.onDragOver(e)}} onDragEnd={(e)=>{this.onDragEnd(e)}}>
+                  {this.state.list && this.state.list.map((todo,index) => (
+                    <ListItem  key={todo.id} todo={todo} index={index} toDoList={this.state.toDoList} projectIndex={this.state.projectIndex} list={this.state.list} activeLable={this.state.activeLable} isAllChecked={this.isAllChecked.bind(this)} changeParentState={this.changeParentState} />
+                  ))}
+                </div>
 
                 {this.state.projects.length>0 &&
                 <footer>
