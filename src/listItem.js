@@ -6,8 +6,6 @@ class ListItem extends React.Component{
         super(props)
     }
 
-    componentWillReceiveProps(){} //??什么情况会用到
-
     toggleChecked(e,index){
         var allList = this.props.toDoList[this.props.projectIndex]
         var allListIndex = allList.indexOf(this.props.list[index])  // ？-1

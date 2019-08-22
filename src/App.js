@@ -199,19 +199,19 @@ class App extends React.Component {
   changeProject(index){
     this.setState({
       projectIndex:index,
-      allList:this.state.toDoList[this.state.projectIndex],
-      list: this.state.toDoList[this.state.projectIndex],
+      allList:this.state.toDoList[index],
+      list: this.state.toDoList[index],
       activeLable:0
-    }) //??没有实时更新
-    if(this.state.list){
-      let itemAllChecked = this.state.list.every( item => item.checked === true)
-      if(itemAllChecked){
-        this.setState({allChecked: true})
-      }else{
-        this.setState({allChecked: false})
+    },()=>{
+      if(this.state.list){
+        let itemAllChecked = this.state.list.every( item => item.checked === true)
+        if(itemAllChecked){
+          this.setState({allChecked: true})
+        }else{
+          this.setState({allChecked: false})
+        }
       }
-    }
-    
+    }) 
   }
 //新建project保存
   newProject(e){
@@ -328,7 +328,7 @@ class App extends React.Component {
               <ul className="project">
               <h5>Projects</h5>
                 {this.state.projects.map((project,index) => (
-                  <li key={project.id} onClick={this.changeProject.bind(this,index)} className={this.state.projectIndex === index ? "project_active":""}>{project.value}</li>
+                  <li key={project.id} onClick={this.changeProject.bind(this, index)} className={this.state.projectIndex === index ? "project_active":""}>{project.value}</li>
                 ))}
                 {this.state.showAddInput &&
                   <input className="add_project_input" placeholder="Add Your Project" onKeyDown={this.newProject.bind(this)} />
@@ -343,7 +343,7 @@ class App extends React.Component {
                     <input className="input" type="text" onKeyDown={this.add.bind(this)} placeholder="What needs to be done?" />
                     {/* <i className="allChecked" onClick={this.allChecked.bind(this)}>></i> */}
                 </div>
-                <div className="listBox" onDragStart={(e)=>{this.onDragStart(e)}} onDragOver={(e)=>{this.onDragOver(e)}} onDragEnd={(e)=>{this.onDragEnd(e)}}>
+                <div className="listBox" onDragStart={this.onDragStart.bind(this)} onDragOver={this.onDragOver.bind(this)} onDragEnd={this.onDragEnd.bind(this)}>
                   {this.state.list && this.state.list.map((todo,index) => (
                     <ListItem  key={todo.id} todo={todo} index={index} toDoList={this.state.toDoList} projectIndex={this.state.projectIndex} list={this.state.list} activeLable={this.state.activeLable} isAllChecked={this.isAllChecked.bind(this)} changeParentState={this.changeParentState.bind(this)} />
                   ))}
@@ -353,7 +353,7 @@ class App extends React.Component {
                 <footer>
                     {this.state.list && 
                       <div>
-                        <input className="checked left" type="checkbox" onChange={(e)=>this.allChecked(e)} checked={this.state.allChecked}  />
+                        <input className="checked left" type="checkbox" onChange={this.allChecked.bind(this)} checked={this.state.allChecked}  />
                         <div className="left">{this.state.list.length} items left</div>
                       </div>
                     }
